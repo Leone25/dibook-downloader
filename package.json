@@ -1,0 +1,25 @@
+{
+  "name": "dibook-downloader",
+  "version": "1.0.0",
+  "description": "A script to download your books from DiBook Laterza as offline PDFs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leone25/dibook-downloader.git"
+  },
+  "author": "Enrico",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leone25/dibook-downloader/issues"
+  },
+  "homepage": "https://github.com/leone25/dibook-downloader#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "prompt-sync": "^4.2.0",
+    "yargs": "^17.7.2"
+  },
+  "type": "module"
+}
