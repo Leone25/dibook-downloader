@@ -4,7 +4,7 @@ Script to download your Laterza DiBook books to pdf for offline use. This only w
 ## Requirements
 
 - [Node](https://nodejs.org/it/) >= 14.0
-- **[pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) installed and available from the command line**
+- Java installed (or if you are on linux you can install pdftk from your package manager, just make sure it's version 3 or above, also known as `pdftk-java`)
 - A modern browser (Chrome, Firefox, Edge, etc.)
 
 ## Installation
@@ -18,6 +18,7 @@ Script to download your Laterza DiBook books to pdf for offline use. This only w
    ```shell
    npm i
    ```
+5. Optional for linux users that can install pdftk from their package manager, go to https://gitlab.com/pdftk-java/pdftk and under `Pre-built binaries`, click on `Standalone jar`, then copy the downloaded file to the script directory
 
 ## How to use
 
@@ -26,10 +27,11 @@ Script to download your Laterza DiBook books to pdf for offline use. This only w
    ```shell
    node .
    ```
+   - if you are a linux user add the `--useSystemExecutable` flag
 2. In a browser, login into your [DiBook Laterza account](https://www.dibooklaterza.it/), and open the book you'd like to download
 3. Open the dev tools (`f12` works) and open the `Application` tab if you are using a chromium based browser or `Storage` if you are using firefox, then select `Local Storage` > `https://www.dibooklaterza.it` and copy the value of the `jwtToken` entry
 4. Paste this value into the terminal wen asked for the `jwtToken`
-5. Enter the isbn of the book you want to download (you can copy it from the url of the book you've opened)
+5. Enter the ISBN of the book you want to download (you can copy it from the url of the book you've opened)
 6. Wait, the book will be downloaded and saved to the script' directory
 
 ## Disclaimer

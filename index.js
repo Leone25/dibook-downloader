@@ -16,6 +16,21 @@ const argv = yargs(process.argv.slice(2))
         type: 'string',
         default: null
     })
+    .option('pdftkJava', {
+        describe: 'The path to the pdftk-java jar file',
+        type: 'string',
+        default: './pdftk-all.jar'
+    })
+    .option('javaPath', {
+        describe: 'Path to java executable',
+        type: 'string',
+        default: 'java'
+    })
+    .option('useSystemExecutable', {
+        describe: 'Use the executable directly instead of running the jar with java, this is usefuly if you are on linux where most package managers install the java version by default thus you don\'t need java',
+        type: 'boolean',
+        default: false
+    })
     .option('pdftkPath', {
         describe: 'Path to pdftk executable',
         type: 'string',
@@ -31,14 +46,22 @@ const argv = yargs(process.argv.slice(2))
 
 const prompt = PromptSync({ sigint: true });
 
+function pdftk(...args) {
+    if (argv.useSystemExecutable) {
+        return spawn(argv.pdftkPath, args);
+    } else {
+        return spawn(argv.javaPath, ['-jar', argv.pdftkJava, ...args]);
+    }
+}
+
 function removePassword(password, input, output) {
     return new Promise(async (resolve, reject) => {
         if (!fs.existsSync(path.dirname(output))) {
             await fs.promises.mkdir(path.dirname(output), { recursive: true });
         }
 
-        let pdftk = spawn(argv.pdftkPath, [input, 'input_pw', password, 'output', output]);
-        pdftk.on('close', resolve);
+        let converter = pdftk(input, 'input_pw', password, 'output', output);
+        converter.on('close', resolve);
     });
 }
 
@@ -48,12 +71,17 @@ function mergePages(pages, output) {
             await fs.promises.mkdir(path.dirname(output), { recursive: true });
         }
 
-        let pdftk = spawn(argv.pdftkPath, [...pages, 'cat', 'output', output]);
-        pdftk.on('close', resolve);
+        let merger = pdftk(...pages, 'cat', 'output', output);
+        merger.on('close', resolve);
     });
 }
 
 (async () => {
+    if (!argv.useSystemExecutable && !fs.existsSync(argv.pdftkJava)) {
+        console.log('It seems like you haven\'t downloaded the pdftk-all.jar file,\nplease download it from https://gitlab.com/pdftk-java/pdftk\nunder section "Pre-built binaries" > "Standalone jar"\n\nand then please place it in the same directory as this script.\nIf you\'d like to use the system\'s pdftk, use the option --useSystemExecutable\n\nMore options available with the --help flag.');
+        return;
+    }
+
     let jwtToken = argv.jwt;
     while (!jwtToken)
         jwtToken = prompt("Input \"jwtToken\": ");
