@@ -38,7 +38,7 @@ Script to download your Laterza DiBook books to pdf for offline use. This only w
 
 Remember that you are responsible for what you are doing on the internet and even tho this script exists it might not be legal in your country to create personal backups of books.
 
-I may or may not update this script depending on my needs, but I'm open to pull requests ecc.
+I may or may not update this script depending on my needs, but I'm open to pull requests, please check [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 
