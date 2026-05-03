@@ -41,6 +41,22 @@ const argv = yargs(process.argv.slice(2))
         type: 'string',
         default: null
     })
+    .option('pagesPerChunk', {
+        describe: 'The number of pages to merge in groups before they are all merged together',
+        type: 'number',
+        default: 100
+    })
+    .check((argv) => {
+        if (argv.pagesPerChunk <= 0) {
+            throw new Error('pagesPerChunk must be a positive number');
+        }
+        return true;
+    })
+    .option('mergeAllAtOnce', {
+        describe: 'Merge all the pages in one operation, generally works only for small books or on linux',
+        type: 'boolean',
+        default: false,
+    })
     .help()
     .argv;
 
@@ -122,7 +138,24 @@ function mergePages(pages, output) {
 
     console.log("Merging pages");
 
-    await mergePages(pages.map(p => `./tmp/pages/${p}`), bookIndex.name.replace(/[^a-z0-9]/gi, '_') + '.pdf');
+    pages = pages.map(p => `./tmp/pages/${p}`);
+
+    if (pages > 100 && argv.mergeAllAtOnce == false) {
+        console.log("Too many pages, merging in chunks.")
+
+        let chunkedPages = [];
+
+        for (let i = 0; i < pages.length; i += argv.pagesPerChunk) {
+            console.log(`Merging from ${i + 1} to ${i + argv.pagesPerChunk + 1}`);
+            const chunk = pages.slice(i, i + argv.pagesPerChunk);
+            await mergePages(chunk, `./tmp/chunked/${i}.pdf`);
+            chunkedPages.push(`./tmp/chunked/${i}.pdf`);
+        }
+
+        pages = chunkedPages;
+    }
+
+    await mergePages(pages, bookIndex.name.replace(/[^a-z0-9]/gi, '_') + '.pdf');
 
     console.log("Cleaning up");
 
